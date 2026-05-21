@@ -23,9 +23,13 @@ uploads/
 # ─── uv lock (optional: keep if you want reproducible installs) ──
 # uv.lock
 
-# ─── Jupyter ──────────────────────────────────────────────
+# ─── Jupyter & Notebooks ──────────────────────────────────
 .ipynb_checkpoints/
 *.ipynb_checkpoints
+notebook/
+
+# ─── Resume PDFs (don't commit personal files) ────────────
+*.pdf
 
 # ─── Node / Frontend ──────────────────────────────────────
 node_modules/

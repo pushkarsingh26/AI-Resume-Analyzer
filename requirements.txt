@@ -1,0 +1,14 @@
+langchain
+langchain-community
+faiss-cpu
+pypdf
+pdfplumber
+sentence-transformers
+google-generativeai
+python-dotenv
+transformers
+torch
+numpy
+pandas
+jupyter
+ipykernel

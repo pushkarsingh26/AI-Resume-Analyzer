@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 function App() {
   const [file, setFile] = useState(null)
   const [uploadStatus, setUploadStatus] = useState('')
@@ -27,7 +29,7 @@ function App() {
     formData.append('file', file)
 
     try {
-      const response = await fetch('http://localhost:8000/upload-resume', {
+      const response = await fetch(`${API_BASE_URL}/upload-resume`, {
         method: 'POST',
         body: formData,
       })
@@ -47,7 +49,7 @@ function App() {
   const handleAnalyze = async () => {
     setLoading(true)
     try {
-      const response = await fetch('http://localhost:8000/analyze-resume')
+      const response = await fetch(`${API_BASE_URL}/analyze-resume`)
       const data = await response.json()
       setAnalysisData(data)
     } catch (error) {
@@ -60,7 +62,7 @@ function App() {
   const handleAtsScore = async () => {
     setLoading(true)
     try {
-      const response = await fetch('http://localhost:8000/ats-score')
+      const response = await fetch(`${API_BASE_URL}/ats-score`)
       const data = await response.json()
       setAtsData(data)
     } catch (error) {
@@ -73,7 +75,7 @@ function App() {
   const handleGenerateQuestions = async () => {
     setLoading(true)
     try {
-      const response = await fetch('http://localhost:8000/generate-questions')
+      const response = await fetch(`${API_BASE_URL}/generate-questions`)
       const data = await response.json()
       setQuestions(data)
     } catch (error) {
@@ -91,7 +93,7 @@ function App() {
     setChatLoading(true)
 
     try {
-      const response = await fetch('http://localhost:8000/chat', {
+      const response = await fetch(`${API_BASE_URL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: currentQuery })

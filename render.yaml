@@ -1,0 +1,25 @@
+services:
+  # Backend FastAPI Web Service (Dockerized)
+  - type: web
+    name: resume-analyzer-backend
+    env: docker
+    dockerfilePath: backend/Dockerfile
+    plan: free
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: OPENROUTER_API_KEY
+        sync: false # You will be prompted to enter this in the Render Dashboard
+
+  # Frontend React Static Site
+  - type: web
+    name: resume-analyzer-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    publishPath: frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: resume-analyzer-backend
+          property: host

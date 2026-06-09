@@ -13,11 +13,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install python dependencies
-COPY backend/requirements.txt ./backend/requirements.txt
-RUN pip install --no-cache-dir -r ./backend/requirements.txt
+COPY backend/requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir -r ./requirements.txt
 
 # Copy backend application files
-COPY backend/ ./backend/
+COPY backend/ ./
 
 # Create uploads directory
 RUN mkdir -p uploads
@@ -25,5 +25,5 @@ RUN mkdir -p uploads
 # Expose the port
 EXPOSE 8000
 
-# Run FastAPI app
-CMD ["sh", "-c", "uvicorn backend.app:app --host 0.0.0.0 --port ${PORT}"]
+# Run FastAPI app from inside the backend directory so relative imports work
+CMD ["sh", "-c", "uvicorn app:app --host 0.0.0.0 --port ${PORT}"]

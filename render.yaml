@@ -12,8 +12,9 @@ services:
         sync: false # You will be prompted to enter this in the Render Dashboard
 
   # Frontend React Static Site
-  - type: static
+  - type: web
     name: resume-analyzer-frontend
+    runtime: static
     buildCommand: cd frontend && npm install && npm run build
     publishPath: frontend/dist
     envVars:

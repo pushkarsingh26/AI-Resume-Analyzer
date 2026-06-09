@@ -2,7 +2,7 @@ services:
   # Backend FastAPI Web Service (Dockerized)
   - type: web
     name: resume-analyzer-backend
-    env: docker
+    runtime: docker
     dockerfilePath: backend/Dockerfile
     plan: free
     envVars:
@@ -16,7 +16,7 @@ services:
     name: resume-analyzer-frontend
     runtime: static
     buildCommand: cd frontend && npm install && npm run build
-    publishPath: frontend/dist
+    staticPublishPath: ./frontend/dist
     envVars:
       - key: VITE_API_URL
         fromService:

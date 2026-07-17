@@ -270,12 +270,14 @@ OPENROUTER_API_KEY="sk-or-v1-your-key-here"
 
 **Step 5:** Start the FastAPI development server.
 ```bash
-# From the project root (recommended)
-uvicorn backend.app:app --reload --port 8000
+# 1. Activate the virtual environment (Windows)
+.venv\Scripts\activate
 
-# OR from inside the backend/ directory
-cd backend
-uvicorn app:app --reload --port 8000
+# OR Activate the virtual environment (macOS/Linux)
+source .venv/bin/activate
+
+# 2. Start the API from the project root
+uvicorn backend.app:app --reload --port 8000
 ```
 
 ✅ The API will be live at **`http://localhost:8000`**  

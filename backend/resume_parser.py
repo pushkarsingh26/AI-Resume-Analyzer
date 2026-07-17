@@ -7,10 +7,16 @@ def parse_pdf(file_path: str) -> str:
         for page in pdf.pages:
             extracted = page.extract_text()
             if extracted:
+                if text and not text.endswith("\n"):
+                    text += "\n"
                 text += extracted
     
     text = re.sub(r'\(cid:\d+\)', '', text)
-    text = text.replace('\n', ' ')
-    text = re.sub(r'\s+', ' ', text)
     
-    return text.strip()
+    # Process line by line to strip extra horizontal spaces but keep newlines
+    lines = []
+    for line in text.splitlines():
+        cleaned_line = re.sub(r'[ \t]+', ' ', line).strip()
+        lines.append(cleaned_line)
+    
+    return "\n".join(lines)

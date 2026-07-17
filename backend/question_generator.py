@@ -1,7 +1,7 @@
-from utils import get_openai_client
+# pyrefly: ignore [missing-import]
+from utils import create_chat_completion
 
 def generate_interview_questions(context: str, domain: str) -> dict:
-    client = get_openai_client()
     prompt = f"""
     Based on the following resume context and domain '{domain}', generate interview questions.
     Resume Context:
@@ -11,19 +11,16 @@ def generate_interview_questions(context: str, domain: str) -> dict:
     Format your response cleanly. Do not include extra conversational text.
     """
     
-    response = client.chat.completions.create(
-        model="openai/gpt-4o-mini",
+    text = create_chat_completion(
         messages=[
             {"role": "system", "content": "You are an expert technical interviewer."},
             {"role": "user", "content": prompt}
-        ]
+        ],
+        tier="normal"
     )
-    
-    text = response.choices[0].message.content.strip()
     return {"questions": text}
     
 def detect_domain_from_context(context: str) -> str:
-    client = get_openai_client()
     domain_prompt = f"""
     Detect the candidate's primary technical domain from the resume context.
 
@@ -42,18 +39,15 @@ def detect_domain_from_context(context: str) -> str:
     - Mobile App Development
     """
     
-    response = client.chat.completions.create(
-        model="openai/gpt-4o-mini",
+    return create_chat_completion(
         messages=[
             {"role": "system", "content": "You are an expert technical recruiter."},
             {"role": "user", "content": domain_prompt}
-        ]
+        ],
+        tier="fast"
     )
-    
-    return response.choices[0].message.content.strip()
 
 def analyze_with_llm(context: str, domain: str, query: str = "Analyze this resume and provide brief AI suggestions.") -> str:
-    client = get_openai_client()
     prompt = f"""
     You are an expert ATS Resume Analyzer.
     Candidate Domain: {domain}
@@ -72,17 +66,15 @@ def analyze_with_llm(context: str, domain: str, query: str = "Analyze this resum
     - Keep answers professional and concise
     """
     
-    response = client.chat.completions.create(
-        model="openai/gpt-4o-mini",
+    return create_chat_completion(
         messages=[
             {"role": "system", "content": f"You are an expert ATS resume analyzer specialized in {domain}."},
             {"role": "user", "content": prompt}
-        ]
+        ],
+        tier="deep"
     )
-    return response.choices[0].message.content.strip()
 
 def answer_custom_query(context: str, query: str) -> str:
-    client = get_openai_client()
     prompt = f"""
     You are an AI assistant answering questions about a candidate's resume.
     Use ONLY the provided resume context below.
@@ -95,12 +87,10 @@ def answer_custom_query(context: str, query: str) -> str:
     {query}
     """
     
-    response = client.chat.completions.create(
-        model="openai/gpt-4o-mini",
+    return create_chat_completion(
         messages=[
             {"role": "system", "content": "You are a helpful and professional AI assistant."},
             {"role": "user", "content": prompt}
-        ]
+        ],
+        tier="normal"
     )
-    return response.choices[0].message.content.strip()
-

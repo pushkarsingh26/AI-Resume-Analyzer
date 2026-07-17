@@ -1,9 +1,12 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent))
+
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
 import shutil
-from pathlib import Path
 from dotenv import load_dotenv
 
 from resume_parser import parse_pdf
@@ -49,6 +52,8 @@ async def upload_resume(file: UploadFile = File(...)):
         app_state["current_text"] = text
         app_state["vector_store"] = create_vector_store(text)
         return {"message": "Resume uploaded and parsed successfully.", "filename": file.filename}
+    except HTTPException as he:
+        raise he
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -71,6 +76,8 @@ async def analyze_resume():
             "domain": domain,
             "ai_suggestions": ai_analysis
         }
+    except HTTPException as he:
+        raise he
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -79,7 +86,7 @@ async def get_ats_score():
     if not app_state["current_text"]:
         raise HTTPException(status_code=400, detail="No resume uploaded yet.")
         
-    domain = app_state.get("domain", "General")
+    domain = app_state.get("domain") or "General"
     score_data = calculate_ats_score(app_state["current_text"], domain)
     return score_data
 
@@ -92,10 +99,12 @@ async def get_questions():
         vs = app_state["vector_store"]
         results = vs.similarity_search("skills projects experience education", k=6)
         context = "\n\n".join(r.page_content for r in results)
-        domain = app_state.get("domain", "General")
+        domain = app_state.get("domain") or "General"
         
         questions = generate_interview_questions(context, domain)
         return questions
+    except HTTPException as he:
+        raise he
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -114,5 +123,7 @@ async def chat_with_resume(request: ChatRequest):
         
         answer = answer_custom_query(context, request.query)
         return {"response": answer}
+    except HTTPException as he:
+        raise he
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -369,10 +369,12 @@ Query → encode → cosine similarity → top-k chunks → LLM context
 | Variable | Required | Description |
 |---|---|---|
 | `OPENROUTER_API_KEY` | ✅ Yes | Your OpenRouter API key for LLM access (GPT-4o-mini) |
+| `OPENROUTER_MAX_TOKENS` | ❌ No | Centralized maximum token limit (integer clamped between 256 and 4096; defaults to 4096) |
 
 Create a `.env` file in the project root:
 ```env
 OPENROUTER_API_KEY="sk-or-v1-your-key-here"
+OPENROUTER_MAX_TOKENS=4096
 ```
 
 > ⚠️ **Never commit your `.env` file to version control.** It is already listed in `.gitignore`.

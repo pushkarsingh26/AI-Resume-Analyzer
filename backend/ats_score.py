@@ -10,6 +10,7 @@ def calculate_ats_score(text: str, domain: str = "General") -> dict:
     core_skills = ["llm", "rag", "langchain", "faiss", "embeddings", "vector database", "chromadb", "transformers", "sentence-transformers", "react", "node.js", "api", "machine learning"]
     related_skills = ["python", "pandas", "numpy", "fastapi", "docker", "streamlit", "sql", "mysql", "postgresql", "git", "github", "javascript", "html", "css", "c", "c++"]
     proficiency_tokens = ["expert", "proficient", "strong", "experienced", "familiar with", "familiar"]
+    bullet_chars = ("-", "*", "•", "▪", "◦", "–", "—")
 
     # Technical Skills (40)
     technical_max = 40
@@ -22,7 +23,7 @@ def calculate_ats_score(text: str, domain: str = "General") -> dict:
     # Projects (15)
     project_max = 15
     project_section_count = len(re.findall(r"\bprojects?\b", resume_text))
-    project_bullets = sum(1 for l in lines if ("project" in l or any(t in l for t in core_skills+related_skills)) and (l.startswith("-") or l.startswith("*") or (l and l[0].isdigit())))
+    project_bullets = sum(1 for l in lines if ("project" in l or any(t in l for t in core_skills+related_skills)) and (l.startswith(bullet_chars) or (l and l[0].isdigit())))
     project_score = 0
     if project_section_count > 0 or project_bullets > 0:
         project_score += 4
@@ -37,11 +38,11 @@ def calculate_ats_score(text: str, domain: str = "General") -> dict:
     experience_max = 10
     experience_score = 0
     years = 0
-    m = re.findall(r"(\d+)\s+years", resume_text)
+    m = re.findall(r"(\d+)\s*(?:\+|plus)?\s*years?", resume_text)
     if m:
         years = max(int(x) for x in m)
     else:
-        m2 = re.findall(r"experience\s*[:\-]?\s*(\d+)\s+years", resume_text)
+        m2 = re.findall(r"experience\s*[:\-]?\s*(\d+)\s*(?:\+|plus)?\s*years?", resume_text)
         if m2:
             years = max(int(x) for x in m2)
     if years >= 4:
@@ -80,7 +81,7 @@ def calculate_ats_score(text: str, domain: str = "General") -> dict:
     structure_score = 0
     sections = ["education", "projects", "skills", "achievements", "experience", "contact"]
     structure_score += sum(1 for s in sections if s in resume_text)
-    bullets = sum(1 for l in lines if l.startswith("-") or l.startswith("*"))
+    bullets = sum(1 for l in lines if l.startswith(bullet_chars))
     if bullets > 5:
         structure_score += 1
     structure_score = min(5, structure_score)

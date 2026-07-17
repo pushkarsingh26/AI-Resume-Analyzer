@@ -26,6 +26,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+async def startup_event():
+    # Warm up the sentence transformer model so it is loaded at boot time
+    try:
+        print("Pre-warming SentenceTransformer model...")
+        from rag_pipeline import EmbeddingManager
+        EmbeddingManager.get_instance()
+        print("SentenceTransformer model successfully pre-warmed and loaded in memory!")
+    except Exception as e:
+        print(f"Error pre-warming model: {e}")
+
 # Relative to where the app runs, though best practice is absolute path
 BASE_DIR = Path(__file__).resolve().parent.parent
 UPLOAD_DIR = BASE_DIR / "uploads"

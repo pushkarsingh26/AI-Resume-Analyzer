@@ -9,10 +9,23 @@ class SearchResult:
     page_content: str
     score: float
 
+import threading
+
 class EmbeddingManager:
+    _instance = None
+    _lock = threading.Lock()
+
+    @classmethod
+    def get_instance(cls):
+        with cls._lock:
+            if cls._instance is None:
+                cls._instance = cls()
+            return cls._instance
+
     def __init__(self, model_name: str = "sentence-transformers/all-MiniLM-L6-v2"):
-        self.model_name = model_name
-        self.model = SentenceTransformer(self.model_name)
+        if not hasattr(self, 'model'):
+            self.model_name = model_name
+            self.model = SentenceTransformer(self.model_name)
 
     def generate_embeddings(self, texts: List[str]) -> np.ndarray:
         return self.model.encode(texts, show_progress_bar=False)
@@ -39,5 +52,5 @@ def create_vector_store(text: str) -> SimpleVectorStore:
         separators=["\n\n", "\n", ".", " "]
     )
     chunks = splitter.split_text(text)
-    manager = EmbeddingManager()
+    manager = EmbeddingManager.get_instance()
     return SimpleVectorStore(chunks, manager)

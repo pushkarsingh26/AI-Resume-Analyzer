@@ -308,6 +308,15 @@ npm run dev
 
 ---
 
+## 🚀 Vercel Deployment
+
+This project is configured with a root-level `package.json` build wrapper. When deploying the repository to **Vercel**:
+
+- Keep the Vercel **Root Directory** setting as the default (`/` repository root).
+- Vercel will automatically run `npm run build` from the root, which delegates dependency installation and compilation to the `frontend/` folder, then moves the static output into the root `dist/` directory for zero-config hosting.
+
+---
+
 ## 📖 Usage Guide
 
 1. **Open** the frontend in your browser at `http://localhost:5173`

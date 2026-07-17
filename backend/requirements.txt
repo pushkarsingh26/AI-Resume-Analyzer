@@ -3,7 +3,6 @@ uvicorn
 python-multipart
 pdfplumber
 langchain-text-splitters
-sentence-transformers
 numpy
 openai
 python-dotenv

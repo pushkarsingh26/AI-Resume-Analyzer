@@ -1,7 +1,7 @@
 from typing import List
 from dataclasses import dataclass
 import numpy as np
-from sentence_transformers import SentenceTransformer
+from utils import get_openai_client
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 @dataclass
@@ -9,26 +9,20 @@ class SearchResult:
     page_content: str
     score: float
 
-import threading
-
 class EmbeddingManager:
-    _instance = None
-    _lock = threading.Lock()
-
-    @classmethod
-    def get_instance(cls):
-        with cls._lock:
-            if cls._instance is None:
-                cls._instance = cls()
-            return cls._instance
-
-    def __init__(self, model_name: str = "sentence-transformers/all-MiniLM-L6-v2"):
-        if not hasattr(self, 'model'):
-            self.model_name = model_name
-            self.model = SentenceTransformer(self.model_name)
+    def __init__(self, model_name: str = "openai/text-embedding-3-small"):
+        self.model_name = model_name
 
     def generate_embeddings(self, texts: List[str]) -> np.ndarray:
-        return self.model.encode(texts, show_progress_bar=False)
+        client = get_openai_client()
+        try:
+            response = client.embeddings.create(
+                model=self.model_name,
+                input=texts
+            )
+            return np.array([item.embedding for item in response.data], dtype=np.float32)
+        except Exception as e:
+            raise Exception(f"Failed to generate embeddings via OpenRouter: {e}")
 
 class SimpleVectorStore:
     def __init__(self, texts: List[str], embedding_manager: EmbeddingManager):
@@ -52,5 +46,5 @@ def create_vector_store(text: str) -> SimpleVectorStore:
         separators=["\n\n", "\n", ".", " "]
     )
     chunks = splitter.split_text(text)
-    manager = EmbeddingManager.get_instance()
+    manager = EmbeddingManager()
     return SimpleVectorStore(chunks, manager)

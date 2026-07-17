@@ -1,0 +1,8 @@
+{
+  "name": "resume-project-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "rm -rf dist && cd frontend && npm install && npm run build && cd .. && mv frontend/dist dist"
+  }
+}
